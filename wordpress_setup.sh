@@ -21,7 +21,10 @@ sudo mysql -e "FLUSH PRIVILEGES;"
 
 # Install PHP
 echo "[Installing PHP]"
+sudo apt-get purge `dpkg -l | grep php| awk '{print $2}' |tr "\n" " "` -y
 sudo apt install php libapache2-mod-php php-mysql -y
+PHP_VERSION=$(php -v | head -n 1 | cut -d " " -f 2 | cut -d "." -f 1,2)
+sudo a2enmod php$PHP_VERSION
 
 # Download and Setup WordPress
 echo "[Setting up WordPress]"
@@ -52,4 +55,6 @@ sudo find /var/www/html/ -type f -exec chmod 640 {} \;
 
 # Disable default Apache page
 echo "[Disabling Default Apache Page]"
-sudo rm /var/www/html/index.html
+if [ -f /var/www/html/index.html ]; then
+    sudo rm /var/www/html/index.html
+fi
